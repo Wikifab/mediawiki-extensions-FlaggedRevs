@@ -1793,6 +1793,10 @@ class FlaggablePageView extends ContextSource {
 	 * Only for people who can review and for pages that have a stable version.
 	 */
 	public function injectPostEditURLParams( &$sectionAnchor, &$extraQuery ) {
+		global $wgFlaggedRevsDisableReviewAfterEdit;
+		if ($wgFlaggedRevsDisableReviewAfterEdit) {
+			return true;
+		}
 		$reqUser = $this->getUser();
 		$this->load();
 		$this->article->loadPageData( 'fromdbmaster' );
