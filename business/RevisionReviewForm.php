@@ -74,8 +74,12 @@ class RevisionReviewForm extends FRGenericSubmitForm {
 		$this->trySet( $this->refid, (int)$value );
 	}
 
+	public function getOldFlags() {
+	    return $this->oldFlags;
+	}
+
 	public function getOldId() {
-		return $this->oldid;
+	    return $this->oldid;
 	}
 
 	public function setOldId( $value ) {
@@ -343,7 +347,10 @@ class RevisionReviewForm extends FRGenericSubmitForm {
 
 			$status = $editStatus->isOK() ? true : 'review_cannot_undo';
 
-			if ( $editStatus->isOK() && class_exists( 'EchoEvent' ) && $editStatus->value['revision'] ) {
+			if ( $editStatus->isOK() &&
+				$editStatus->value['revision'] &&
+				ExtensionRegistry::getInstance()->isLoaded( 'Echo' )
+			) {
 				$affectedRevisions = []; // revid -> userid
 				$revisions = wfGetDB( DB_REPLICA )->select(
 					'revision',
@@ -400,7 +407,7 @@ class RevisionReviewForm extends FRGenericSubmitForm {
 	/**
 	 * Adds or updates the flagged revision table for this page/id set
 	 * @param Revision $rev The revision to be accepted
-	 * @param FlaggedRevision $oldFrev Currently accepted version of $rev or null
+	 * @param FlaggedRevision|null $oldFrev Currently accepted version of $rev or null
 	 * @throws Exception
 	 * @return bool|array true on success, array of errors on failure
 	 */
@@ -631,7 +638,7 @@ class RevisionReviewForm extends FRGenericSubmitForm {
 	 * Get template and image versions from form value for parser output.
 	 * @param string $templateParams
 	 * @param string $imageParams
-	 * @return [ templateIds, fileSHA1Keys ]
+	 * @return array [ templateIds, fileSHA1Keys ]
 	 * templateIds like ParserOutput->mTemplateIds
 	 * fileSHA1Keys like ParserOutput->mImageTimeKeys
 	 */
