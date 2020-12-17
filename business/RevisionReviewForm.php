@@ -82,6 +82,10 @@ class RevisionReviewForm extends FRGenericSubmitForm {
 		$this->trySet( $this->oldid, (int)$value );
 	}
 
+	public function getOldFlags() {
+		return $this->oldFlags;
+	}
+
 	public function getTemplateParams() {
 		return $this->templateParams;
 	}
